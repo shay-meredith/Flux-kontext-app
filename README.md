@@ -75,13 +75,15 @@ source .venv/bin/activate
 
 ### 3. Install Dependencies
 
-Install the Python dependencies from `requirements.txt`.
+Install the Python dependencies from `requirements.txt`. **macOS users should install from `requirements-mps.txt` instead.**
 
 #### Option A: Using `uv`
 
 ```bash
 # Install dependencies into your activated environment
 uv pip install -r requirements.txt
+# macOS (MPS)
+uv pip install -r requirements-mps.txt
 ```
 
 #### Option B: Using `pip`
@@ -89,7 +91,23 @@ uv pip install -r requirements.txt
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
+# macOS (MPS)
+pip install -r requirements-mps.txt
 ```
+
+### Apple Silicon (M1/M2) Setup
+
+Install the macOS build of PyTorch that enables the Metal Performance Shaders
+(MPS) backend:
+
+```bash
+pip3 install torch==2.x
+```
+
+After installation, set `PYTORCH_DEVICE=mps` in your `.env` file to run the
+model on your Mac's GPU. Keep in mind that on Apple Silicon machines the GPU
+shares unified memory with system RAM, so large images may use a lot of your
+available memory.
 
 ### 4. Configure Your Environment
 
@@ -112,6 +130,8 @@ RESULTS_FOLDER="generated_images"
 # --- Job & Resource Management ---
 # Device to run the model on ('cuda', 'cpu'). Defaults to 'cuda' if available.
 PYTORCH_DEVICE="cuda"
+# Enable memory optimizations when using Apple's MPS backend (requires PYTORCH_DEVICE="mps").
+ENABLE_MPS_SLICING=1
 # How long to keep job results in memory and on disk (in seconds). Default is 600 (10 minutes).
 JOB_RESULT_TTL=600
 # How often the cleanup worker runs (in seconds). Default is 300 (5 minutes).
@@ -157,6 +177,7 @@ You can now upload an image and start stylizing!
 - `app.py` — The all-in-one Flask server, API endpoints, and background image processing workers.
 - `static/*` — The complete, dynamic frontend application.
 - `requirements.txt` — All Python dependencies.
+- `requirements-mps.txt` — Use this on macOS to avoid CUDA-only packages.
 - `generated_images/` — (Default directory) Where generated images are stored.
 - `.env` — (User-created from `.env_template`) File for all your local configuration.
 
