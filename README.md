@@ -33,6 +33,13 @@ This is not just a Ghibli-fier! The app has dozens of style profiles and advance
 - Modern web browser (Chrome, Firefox, Edge, etc.)
 - Some images to Ghiblify!
 
+### Apple Silicon (MPS)
+
+If you're running on Apple Silicon and set `PYTORCH_DEVICE=mps`, start with a
+smaller canvas size. `768x768` generally fits within the available memory on
+most Macs. You can override the defaults by setting `DEFAULT_WIDTH` and
+`DEFAULT_HEIGHT` in your `.env` file.
+
 ## Setup & Installation
 
 ### 1. Clone the Project
