@@ -97,6 +97,9 @@ try:
     # Use environment variable for device, with auto-detection as fallback
     _default_device = "cuda" if torch.cuda.is_available() else "cpu"
     DEVICE = os.getenv("PYTORCH_DEVICE", _default_device)
+    ENABLE_MPS_SLICING = (
+        os.getenv("ENABLE_MPS_SLICING", "1").lower() not in ["0", "false", "no"]
+    )
     TORCH_DTYPE = (
         torch.bfloat16 if DEVICE == "cuda" else torch.float32
     )  # bfloat16 not supported on CPU for all ops
@@ -123,6 +126,10 @@ try:
         pipe.enable_model_cpu_offload()
     else:
         pipe.to(DEVICE)
+
+    if DEVICE == "mps" and ENABLE_MPS_SLICING:
+        pipe.enable_attention_slicing()
+        pipe.enable_vae_slicing()
 
     logger.info(f"Model initialized successfully on device '{DEVICE}'.")
 
