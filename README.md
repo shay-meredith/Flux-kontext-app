@@ -68,13 +68,15 @@ source .venv/bin/activate
 
 ### 3. Install Dependencies
 
-Install the Python dependencies from `requirements.txt`.
+Install the Python dependencies from `requirements.txt`. **macOS users should install from `requirements-mps.txt` instead.**
 
 #### Option A: Using `uv`
 
 ```bash
 # Install dependencies into your activated environment
 uv pip install -r requirements.txt
+# macOS (MPS)
+uv pip install -r requirements-mps.txt
 ```
 
 #### Option B: Using `pip`
@@ -82,6 +84,8 @@ uv pip install -r requirements.txt
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
+# macOS (MPS)
+pip install -r requirements-mps.txt
 ```
 
 ### 4. Configure Your Environment
@@ -150,6 +154,7 @@ You can now upload an image and start stylizing!
 - `app.py` — The all-in-one Flask server, API endpoints, and background image processing workers.
 - `static/*` — The complete, dynamic frontend application.
 - `requirements.txt` — All Python dependencies.
+- `requirements-mps.txt` — Use this on macOS to avoid CUDA-only packages.
 - `generated_images/` — (Default directory) Where generated images are stored.
 - `.env` — (User-created from `.env_template`) File for all your local configuration.
 
