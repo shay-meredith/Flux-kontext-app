@@ -123,6 +123,8 @@ RESULTS_FOLDER="generated_images"
 # --- Job & Resource Management ---
 # Device to run the model on ('cuda', 'cpu'). Defaults to 'cuda' if available.
 PYTORCH_DEVICE="cuda"
+# Enable memory optimizations when using Apple's MPS backend (requires PYTORCH_DEVICE="mps").
+ENABLE_MPS_SLICING=1
 # How long to keep job results in memory and on disk (in seconds). Default is 600 (10 minutes).
 JOB_RESULT_TTL=600
 # How often the cleanup worker runs (in seconds). Default is 300 (5 minutes).
