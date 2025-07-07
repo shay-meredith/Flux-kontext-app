@@ -81,9 +81,9 @@ class Config:
     CLEANUP_INTERVAL = int(os.getenv("CLEANUP_INTERVAL", 300))  # 5 minutes
     # Folder to store generated images
     RESULTS_FOLDER = os.getenv("RESULTS_FOLDER", "generated_images")
-    # Default generation parameters
-    DEFAULT_WIDTH = 1024
-    DEFAULT_HEIGHT = 1024
+    # Default generation parameters (can be overridden via environment variables)
+    DEFAULT_WIDTH = int(os.getenv("DEFAULT_WIDTH", 1024))
+    DEFAULT_HEIGHT = int(os.getenv("DEFAULT_HEIGHT", 1024))
     DEFAULT_STEPS = 28
     DEFAULT_GUIDANCE_SCALE = 2.5
     DEFAULT_TRUE_CFG_SCALE = 1.5
@@ -108,6 +108,15 @@ try:
         if DEVICE == "cuda"
         else torch.float16 if DEVICE == "mps" else torch.float32
     )  # bfloat16 not supported on CPU for all ops
+
+    # On Apple Silicon ("mps" device), use smaller defaults unless overridden
+    if DEVICE == "mps":
+        if "DEFAULT_WIDTH" not in os.environ:
+            Config.DEFAULT_WIDTH = 768
+        if "DEFAULT_HEIGHT" not in os.environ:
+            Config.DEFAULT_HEIGHT = 768
+
+    if not torch.cuda.is_available():
 
     if DEVICE == "cpu":
         logger.warning(
