@@ -84,6 +84,20 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+### Apple Silicon (M1/M2) Setup
+
+Install the macOS build of PyTorch that enables the Metal Performance Shaders
+(MPS) backend:
+
+```bash
+pip3 install torch==2.x
+```
+
+After installation, set `PYTORCH_DEVICE=mps` in your `.env` file to run the
+model on your Mac's GPU. Keep in mind that on Apple Silicon machines the GPU
+shares unified memory with system RAM, so large images may use a lot of your
+available memory.
+
 ### 4. Configure Your Environment
 
 The application is now configured using an environment file.
