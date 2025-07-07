@@ -96,15 +96,22 @@ pipe = None
 try:
     # Use environment variable for device, with auto-detection as fallback
     _default_device = "cuda" if torch.cuda.is_available() else "cpu"
+    if _default_device == "cpu" and torch.backends.mps.is_available():
+        _default_device = "mps"
+
     DEVICE = os.getenv("PYTORCH_DEVICE", _default_device)
     TORCH_DTYPE = (
-        torch.bfloat16 if DEVICE == "cuda" else torch.float32
+        torch.bfloat16
+        if DEVICE == "cuda"
+        else torch.float16 if DEVICE == "mps" else torch.float32
     )  # bfloat16 not supported on CPU for all ops
 
-    if not torch.cuda.is_available():
+    if DEVICE == "cpu":
         logger.warning(
-            "CUDA not available. Running on CPU, which will be extremely slow."
+            "CUDA/MPS not available. Running on CPU, which will be extremely slow."
         )
+    elif DEVICE == "mps":
+        logger.info("Using Apple Silicon MPS backend.")
 
     from dfloat11 import DFloat11Model
     from diffusers import FluxKontextPipeline
@@ -121,6 +128,8 @@ try:
     if DEVICE == "cuda":
         # Offloading is essential for consumer GPUs with limited VRAM
         pipe.enable_model_cpu_offload()
+    elif DEVICE == "mps":
+        pipe.to("mps")
     else:
         pipe.to(DEVICE)
 
@@ -348,6 +357,8 @@ def image_generation_worker():
                 if "params" in job_results.get(job_id, {}):
                     del job_results[job_id]["params"]["image"]
                     del job_results[job_id]["params"]["generator"]
+                if DEVICE == "mps":
+                    torch.mps.empty_cache()
 
         # Sleep to prevent busy-waiting when the queue is empty
         time.sleep(0.1)
